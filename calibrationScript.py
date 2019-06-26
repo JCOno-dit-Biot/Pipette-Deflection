@@ -17,7 +17,7 @@ import cv2
 import math
 from scipy import stats
 
-def data_selector(fFile):
+def data_selector():
   root = tk.Tk()
   root.withdraw()
   root.update()
@@ -41,7 +41,7 @@ def data_selector(fFile):
 plt.close('all')
 plt.ioff()
 ###############################################################################
-'''This section ùmust must completed before running the program. Some parameters
+'''This section must be completed before running the program. Some parameters
 such as angle, ret, Diam should be adjusted in order to get optimal results depending on
 the set of data under consideration'''
 
@@ -54,26 +54,26 @@ angle=15
 ## Threshold value to use to go from greyscale to B&W
 ret=55
 
-## Enter first picture to consider
+## Enter first picture to consider for calibration
 firstPic=1
 
-## Enter last picture to consider
+## Enter last picture to consider for calibration
 lastPic=80
 
-##Enter diameter of the pipette in pixels
+##Enter diameter of the pipette in pixels (measured with ImageJ for example)
 Diam= 20
 
 ###############################################################################
 
 ##Browse folder where the images are saved##
-directory, fileNames = data_selector('.tif')
+directory, fileNames = data_selector()
 
 plt.figure('Please select an horizontal line (2 points) for the 1D cross-correlation')
 A=cv2.imread(directory+'/'+fileNames[1],cv2.IMREAD_GRAYSCALE)
 F=cv2.imread(directory+'/'+fileNames[-1],cv2.IMREAD_GRAYSCALE)
 plt.imshow((A+F).astype('float')/2,cmap='gray')
 
-##select an horizontal line the line should intersect with the pipette (2points)##
+##select an horizontal line that intersects with the pipette (2points)##
 points = np.asarray(plt.ginput(2))
 points=points.astype(int)
 plt.close('all')
@@ -84,7 +84,7 @@ y=points[0,1]
 line=np.arange(points[0,0],points[1,0],1)
 
 PCD = (B[y,line])
-RefPCD = PCD #defines the reference profile to analise to find initial position of the pipette
+RefPCD = PCD #defines the reference profile to find initial position of the pipette
 
 #find initial position of the pipettte
 d,tval = deflection.pippos(PCD,RefPCD,0)
@@ -108,7 +108,7 @@ np.save(directory+'/deflection',defl)
 plt.savefig(directory+'/deflection')
 
 ##############################################################################
-''' In this section, the code is measuring the volume of the droplet at the end
+''' In this section, the code is measuring the volume of the droplet at the tip
 of the pipette. Assuming the liquid is water, the force applied on the pipette can be 
 calculated.
 
